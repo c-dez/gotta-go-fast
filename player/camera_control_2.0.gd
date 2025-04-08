@@ -1,7 +1,8 @@
 extends Node3D
 
 @export_category("Mouse Sensitivity")
-@export var mouse_sensitivity := 0.25/3 # /3 para 60 fps
+@export var mouse_sensitivity := 0.25/3 # /3 para 60 fps 0.008333333333333333
+
 var camera_input_direction := Vector2.ZERO
 
 func _ready() -> void:

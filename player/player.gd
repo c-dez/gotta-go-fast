@@ -23,14 +23,14 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	dash()
 	action2()
-	movement_v2(_delta)
+	movement(_delta)
 	gravity(_delta)
 	jump()
 
 	pass
 
 
-func movement_v2(_delta) -> void:
+func movement(_delta) -> void:
 ### posible problema con el no usar delta para movimiento
 	### esta version implementa parte de codigo de gdquest para mover en tercera persona entre el input de el player y la pocicion de la camara
 	### Esta modificado para  tener un movimiento mas instantaneo
@@ -64,9 +64,7 @@ func movement_v2(_delta) -> void:
 	### mesh mira hacia last_movement_direction
 	if move_direction.length() > 0.2:
 		last_movement_direction = move_direction
-	
 	var target_angle := Vector3.FORWARD.signed_angle_to(last_movement_direction, Vector3.UP)
-	# mesh_node.global_rotation.y = target_angle
 	mesh_node.global_rotation.y = lerp_angle(mesh_node.global_rotation.y, target_angle, rotation_speed * _delta)
 
 
@@ -91,21 +89,3 @@ func gravity(_delta) -> void:
 		state_machine.state = state_machine.MOVEMENT_STATE.JUMP
 
 
-func movement_v1(_delta: float) -> void:
-	#### OBSOLETA #####
-	if not is_on_floor():
-		velocity += get_gravity() * _delta
-
-	jump()
-
-	var input_dir: Vector2 = player_inputs.raw_input
-	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-	# print(direction)
-	if direction:
-		velocity.x = direction.x * SPEED
-		velocity.z = direction.z * SPEED
-	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-		velocity.z = move_toward(velocity.z, 0, SPEED)
-
-	move_and_slide()
