@@ -8,9 +8,9 @@ const JUMP_VELOCITY := 8.0
 @onready var camera_control_node: Node3D = get_node("CameraControl")
 
 ### rotate mesh node
-@onready var mesh_node: MeshInstance3D = get_node("Mesh")
+@onready var mesh_node: Node3D = get_node("GodetteSkin")
 var last_movement_direction := Vector3.BACK
-var rotation_speed: float = 15
+var rotation_speed: float = 12
 
 ###state machine
 @onready var state_machine :Node = get_node("StateMachine")
@@ -26,6 +26,12 @@ func _physics_process(_delta: float) -> void:
 	movement(_delta)
 	gravity(_delta)
 	jump()
+
+	# print(velocity.y)
+	if state_machine.state == state_machine.MOVEMENT_STATE.FALLING and is_on_floor():
+		print("landing")
+
+
 
 	pass
 
@@ -58,13 +64,13 @@ func movement(_delta) -> void:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		velocity.z = move_toward(velocity.z, 0, SPEED)
 
-		state_machine.state = state_machine.MOVEMENT_STATE.IDDLE
+		state_machine.state = state_machine.MOVEMENT_STATE.IDLE
 	move_and_slide()
 
 	### mesh mira hacia last_movement_direction
 	if move_direction.length() > 0.2:
 		last_movement_direction = move_direction
-	var target_angle := Vector3.FORWARD.signed_angle_to(last_movement_direction, Vector3.UP)
+	var target_angle := Vector3.BACK.signed_angle_to(last_movement_direction, Vector3.UP)
 	mesh_node.global_rotation.y = lerp_angle(mesh_node.global_rotation.y, target_angle, rotation_speed * _delta)
 
 
@@ -81,11 +87,19 @@ func action2() -> void:
 func jump() -> void:
 	if player_inputs.space_bar() and is_on_floor():
 		velocity.y = JUMP_VELOCITY
+		state_machine.state = state_machine.MOVEMENT_STATE.JUMP_START
 
 
 func gravity(_delta) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * _delta
-		state_machine.state = state_machine.MOVEMENT_STATE.JUMP
+		# state_machine.state = state_machine.MOVEMENT_STATE.ON_AIR
+		enter()
+
+func enter()->void:
+	state_machine.last_state = state_machine.state
+	state_machine.state =state_machine.MOVEMENT_STATE.ON_AIR
 
 
+
+	pass
