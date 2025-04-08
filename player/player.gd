@@ -7,6 +7,11 @@ const JUMP_VELOCITY := 6.0
 
 @onready var camera_control_node := get_node("CameraControl")
 
+### rotate mesh node
+@onready var mesh_node: MeshInstance3D = get_node("Mesh")
+var last_movement_direction := Vector3.FORWARD
+var rotation_speed: float = 10
+
 func _ready() -> void:
 	pass
 
@@ -14,7 +19,7 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	dash()
 	action2()
-	movement_v2()
+	movement_v2(_delta)
 
 	gravity(_delta)
 	jump()
@@ -22,12 +27,10 @@ func _physics_process(_delta: float) -> void:
 
 	pass
 
-func movement_v2() -> void:
+func movement_v2(_delta) -> void:
 ### posible problema con el no usar delta para movimiento
-
 	### esta version implementa parte de codigo de gdquest para mover en tercera persona entre el input de el player y la pocicion de la camara
 	### Esta modificado para  tener un movimiento mas instantaneo
-
 	###  raw_input: tomado desde PlayerInputs node
 	var raw_input: Vector2 = player_inputs.raw_input
 
@@ -49,6 +52,14 @@ func movement_v2() -> void:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		velocity.z = move_toward(velocity.z, 0, SPEED)
 	move_and_slide()
+
+	### mesh mira hacia last_movement_direction
+	if move_direction.length() > 0.2:
+		last_movement_direction = move_direction
+	
+	var target_angle := Vector3.FORWARD.signed_angle_to(last_movement_direction, Vector3.UP)
+	# mesh_node.global_rotation.y = target_angle
+	mesh_node.global_rotation.y = lerp_angle(mesh_node.global_rotation.y, target_angle, rotation_speed * _delta)
 
 
 func movement_v1(_delta: float) -> void:
