@@ -3,14 +3,18 @@ extends CharacterBody3D
 
 @onready var player_inputs: Node = get_node("PlayerInputs")
 const SPEED := 8.0
-const JUMP_VELOCITY := 6.0
+const JUMP_VELOCITY := 8.0
 
-@onready var camera_control_node := get_node("CameraControl")
+@onready var camera_control_node: Node3D = get_node("CameraControl")
 
 ### rotate mesh node
 @onready var mesh_node: MeshInstance3D = get_node("Mesh")
-var last_movement_direction := Vector3.FORWARD
-var rotation_speed: float = 10
+var last_movement_direction := Vector3.BACK
+var rotation_speed: float = 15
+
+###state machine
+@onready var state_machine :Node = get_node("StateMachine")
+
 
 func _ready() -> void:
 	pass
@@ -20,12 +24,11 @@ func _physics_process(_delta: float) -> void:
 	dash()
 	action2()
 	movement_v2(_delta)
-
 	gravity(_delta)
 	jump()
-	
 
 	pass
+
 
 func movement_v2(_delta) -> void:
 ### posible problema con el no usar delta para movimiento
@@ -48,9 +51,14 @@ func movement_v2(_delta) -> void:
 		### Movimiento sin "peso"
 		velocity.x = move_direction.x * SPEED
 		velocity.z = move_direction.z * SPEED
+
+		state_machine.state = state_machine.MOVEMENT_STATE.RUN
+
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		velocity.z = move_toward(velocity.z, 0, SPEED)
+
+		state_machine.state = state_machine.MOVEMENT_STATE.IDDLE
 	move_and_slide()
 
 	### mesh mira hacia last_movement_direction
@@ -60,6 +68,27 @@ func movement_v2(_delta) -> void:
 	var target_angle := Vector3.FORWARD.signed_angle_to(last_movement_direction, Vector3.UP)
 	# mesh_node.global_rotation.y = target_angle
 	mesh_node.global_rotation.y = lerp_angle(mesh_node.global_rotation.y, target_angle, rotation_speed * _delta)
+
+
+func dash() -> void:
+	if player_inputs.mb1():
+		print("dash")
+
+
+func action2() -> void:
+	if player_inputs.mb2():
+		print("action 2")
+
+
+func jump() -> void:
+	if player_inputs.space_bar() and is_on_floor():
+		velocity.y = JUMP_VELOCITY
+
+
+func gravity(_delta) -> void:
+	if not is_on_floor():
+		velocity += get_gravity() * _delta
+		state_machine.state = state_machine.MOVEMENT_STATE.JUMP
 
 
 func movement_v1(_delta: float) -> void:
@@ -80,22 +109,3 @@ func movement_v1(_delta: float) -> void:
 		velocity.z = move_toward(velocity.z, 0, SPEED)
 
 	move_and_slide()
-
-
-func dash() -> void:
-	if player_inputs.mb1():
-		print("dash")
-
-
-func action2() -> void:
-	if player_inputs.mb2():
-		print("action 2")
-
-
-func jump() -> void:
-	if player_inputs.space_bar() and is_on_floor():
-		velocity.y = JUMP_VELOCITY
-
-func gravity(_delta) -> void:
-	if not is_on_floor():
-		velocity += get_gravity() * _delta
