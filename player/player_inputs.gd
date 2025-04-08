@@ -1,14 +1,16 @@
 extends Node
 
 
+var raw_input := Vector2.ZERO
+
 
 func _physics_process(_delta: float) -> void:
-    # input_dir()
+    get_raw_input()
     pass
 
-func input_dir() -> Vector2:
-    var input_vector: Vector2 = Input.get_vector("left", "rigth", "forward", "backwards")
-    return input_vector
+func get_raw_input() -> void:
+    var vector := Input.get_vector("left", "rigth", "forward", "backwards")
+    raw_input = vector
 
 
 func space_bar() -> bool:
