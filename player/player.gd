@@ -31,7 +31,7 @@ func _physics_process(_delta: float) -> void:
 	if state_machine.state == state_machine.MOVEMENT_STATE.FALLING and is_on_floor():
 		print("landing")
 
-
+	
 
 	pass
 
@@ -93,8 +93,8 @@ func jump() -> void:
 func gravity(_delta) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * _delta
-		# state_machine.state = state_machine.MOVEMENT_STATE.ON_AIR
-		enter()
+		state_machine.state = state_machine.MOVEMENT_STATE.ON_AIR
+		# enter()
 
 func enter()->void:
 	state_machine.last_state = state_machine.state

@@ -8,7 +8,7 @@ extends Node
 @onready var label := get_node("Label")
 enum MOVEMENT_STATE {IDLE, RUN, JUMP_START, ON_AIR, FALLING, LANDING}
 var state: int = 0
-var last_state: int = 0
+# var last_state: int = 0
 ### Animation Player
 @onready var animation_player = get_node("../GodetteSkin/AnimationPlayer")
 var transition_speed:float = 0.2
@@ -19,7 +19,7 @@ func _ready() -> void:
 	pass
 
 func _process(_delta: float) -> void:
-	print("current :",state," last: ", last_state)
+	# print("current :",state," last: ", last_state)
 
 	match state:
 		MOVEMENT_STATE.IDLE:
@@ -38,7 +38,7 @@ func _process(_delta: float) -> void:
 			animation_player.current_animation = "Running_C"
 			animation_player.speed_scale = 1.0
 			animation_player.set_blend_time("Idle","Running_C", transition_speed)
-			animation_player.set_blend_time("Jump_Start","Running_C", transition_speed)
+			animation_player.set_blend_time("Jump_Idle","Running_C", transition_speed)
 
 
 
