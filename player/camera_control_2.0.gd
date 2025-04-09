@@ -14,23 +14,19 @@ func _unhandled_input(event: InputEvent) -> void:
 	var is_camera_motion := event is InputEventMouseMotion
 	if is_camera_motion:
 		camera_input_direction = event.screen_relative * mouse_sensitivity
-		# camera_input_direction = event.screen_relative 
 
 
 func _physics_process(_delta: float) -> void:
 	hide_mesh_on_camera_too_close()
 	rotation.x -= camera_input_direction.y * _delta
 	rotation.y -= camera_input_direction.x * _delta
-	rotation.x = clamp(rotation.x, -PI / 6.0, PI / 3.0)
+	# rotation.x = clamp(rotation.x, -PI / 5.0, PI / 3.0)
+	rotation.x = clamp(rotation.x, deg_to_rad(-50), deg_to_rad(30))
 	camera_input_direction = Vector2.ZERO
 
 
-	# print(get_node("SpringArm3D").get_hit_length())
-
-
-func hide_mesh_on_camera_too_close()->void:
+func hide_mesh_on_camera_too_close() -> void:
 	if get_node("SpringArm3D").get_hit_length() < 1.6:
 		mesh.visible = false
 	else:
 		mesh.visible = true
-
