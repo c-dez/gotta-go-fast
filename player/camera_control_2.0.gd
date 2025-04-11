@@ -21,7 +21,7 @@ func _physics_process(_delta: float) -> void:
 	rotation.x -= camera_input_direction.y * _delta
 	rotation.y -= camera_input_direction.x * _delta
 	# rotation.x = clamp(rotation.x, -PI / 5.0, PI / 3.0)
-	rotation.x = clamp(rotation.x, deg_to_rad(-50), deg_to_rad(30))
+	rotation.x = clamp(rotation.x, deg_to_rad(-45), deg_to_rad(30))
 	camera_input_direction = Vector2.ZERO
 
 
