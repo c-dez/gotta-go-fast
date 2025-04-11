@@ -15,7 +15,7 @@ var rotation_speed: float = 12
 ### Animation
 var defend: bool = false:
 	set(value):
-		### invoca funcion defend de godette_skin dependiendo de los condicionales
+		### al cambiar el valor de variable defend  se evalua if statements y se invoca funcion defend() desde skin con parametros deseados
 		if not defend and value:
 			skin.defend(true)
 		if defend and not value:
@@ -29,6 +29,7 @@ func _physics_process(_delta: float) -> void:
 	move_logic(_delta)
 	gravity(_delta)
 	jump_logic()
+	# skin.attack()
 	pass
 
 
@@ -44,7 +45,6 @@ func move_logic(_delta) -> void:
 	var right: Vector3 = camera_control_node.global_basis.x
 	### Toma los valores : cameraControl basis y raw_input para crear un vector3
 	var move_direction: Vector3 = forward * raw_input.y + right * raw_input.x
-	# move_direction.y = 0.0
 	move_direction = move_direction.normalized()
 	var _speed: float = defend_speed if defend else SPEED
 
@@ -71,7 +71,8 @@ func move_logic(_delta) -> void:
 
 
 func action1() -> void:
-	if player_inputs.mb1():
+	# if player_inputs.mb1():
+	if Input.is_action_just_pressed("mb1"):
 		skin.attack()
 
 
