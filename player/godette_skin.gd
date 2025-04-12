@@ -9,7 +9,7 @@ var attacking: bool = false
 
 
 func _physics_process(_delta: float) -> void:
-    print(second_attack_timer.time_left)
+    print(attacking)
 
     pass
 
@@ -27,7 +27,7 @@ func attack() -> void:
         
     if !set_attacking_false.time_left:
         ### por alguna razon en algunas ocasiones attacking falla en ser falso lo que no deja que animacion chop funcione correctamente, para forzar a que cambie a false, se usa un timer a 1 segundo (declarado en godot) cuando el timer llega a 0 attacking = false
-        # attacking = false
+        attacking = false
         pass
 
 func attacking_toggle(value:bool) -> void:
