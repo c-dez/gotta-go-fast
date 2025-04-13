@@ -6,6 +6,11 @@ extends Node3D
 @onready var set_attacking_false: Timer = get_node("SetAttackingFalse")
 @onready var extra_animation: AnimationNodeAnimation = get_node("AnimationTree").get_tree_root().get_node("ExtraAnimation")
 var attacking: bool = false
+var squash_and_stretch: float = 1.0:
+    set(value):
+        squash_and_stretch = value
+        var negative := 1.0 + (1.0 - squash_and_stretch)
+        scale = Vector3(negative,squash_and_stretch, negative)
 
 
 func _physics_process(_delta: float) -> void:
@@ -13,6 +18,7 @@ func _physics_process(_delta: float) -> void:
 
 func set_move_state(state_name: String) -> void:
     move_state_machine.travel(state_name)
+
 
 func attack() -> void:
     if not attacking:
@@ -53,11 +59,13 @@ func switch_weapon(weapon_active: bool) -> void:
     if weapon_active:
         sword_1handed.show()
         wand.hide()
+        do_squash_and_stretch(1.2, 0.15)
     else:
         sword_1handed.hide()
         wand.show()
-    pass
+        do_squash_and_stretch(1.2, 0.15)
 
+    pass
 
 
 func cast_spell() -> void:
@@ -76,6 +84,7 @@ func hit() -> void:
     get_node("AnimationTree").set("parameters/AttackOneShot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_ABORT)
     attacking = false
 
-
-
-    pass
+func do_squash_and_stretch(value :float,duration:float = 0.1 ):
+    var tween = create_tween()
+    tween.tween_property(self , "squash_and_stretch", value, duration) 
+    tween.tween_property(self , "squash_and_stretch", 1.0, duration *1.8). set_ease(Tween.EASE_IN_OUT) 

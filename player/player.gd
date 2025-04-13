@@ -34,13 +34,12 @@ func _physics_process(_delta: float) -> void:
 	jump_logic()
 
 	if Input.is_action_just_pressed('ui_accept'):
-		skin.hit()
+		# skin.hit()
 		pass
 	pass
 
 
 func move_logic(_delta) -> void:
-### posible problema con el no usar delta para movimiento
 	### esta version implementa parte de codigo de gdquest para mover en tercera persona entre el input de el player y la pocicion de la camara
 	### Esta modificado para  tener un movimiento mas instantaneo
 	###  raw_input: tomado desde PlayerInputs node
@@ -82,7 +81,7 @@ func ability_logic() -> void:
 		if weapon_active:
 		### Atacar con cuerpo a cuerpo
 			skin.attack()
-			stop_movement(0.3, 0.8)
+			stop_movement(0.3, 0.5)
 
 		else:
 		### atacar magia
@@ -96,7 +95,9 @@ func ability_logic() -> void:
 		skin.switch_weapon(weapon_active)
 		pass
 
+
 func stop_movement(start_duration:float, end_duration:float)->void:
+	### su intencion es modificar la velocidad de movimiento para acciones como atacar
 	var tween = create_tween()
 	tween.tween_property(self, "speed_modifier", 0.0, start_duration)
 	tween.tween_property(self, "speed_modifier", 1.0, end_duration)
@@ -110,6 +111,7 @@ func action2() -> void:
 func jump_logic() -> void:
 	if player_inputs.space_bar() and is_on_floor():
 		velocity.y = JUMP_VELOCITY
+		skin.do_squash_and_stretch(1.2, 0.15)
 
 
 func gravity(_delta) -> void:
@@ -119,3 +121,6 @@ func gravity(_delta) -> void:
 
 	if velocity.y < 0:
 		velocity += get_gravity() * 2 * _delta
+
+
+
