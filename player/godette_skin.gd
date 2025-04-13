@@ -4,6 +4,7 @@ extends Node3D
 @onready var attack_state_machine: AnimationNodeStateMachinePlayback = get_node("AnimationTree").get("parameters/AttackStateMachine/playback")
 @onready var second_attack_timer: Timer = get_node("SecondAttackTimer")
 @onready var set_attacking_false: Timer = get_node("SetAttackingFalse")
+@onready var extra_animation: AnimationNodeAnimation = get_node("AnimationTree").get_tree_root().get_node("ExtraAnimation")
 var attacking: bool = false
 
 
@@ -17,9 +18,7 @@ func attack() -> void:
     if not attacking:
         get_node("AnimationTree").set("parameters/AttackOneShot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
         set_attacking_false.start()
-        # attack_state_machine.travel("Chop" )
         attack_state_machine.travel("Slice" if second_attack_timer.time_left else "Chop")
-        
     if !set_attacking_false.time_left:
         ### por alguna razon en algunas ocasiones attacking falla en ser falso lo que no deja que animacion chop funcione correctamente, para forzar a que cambie a false, se usa un timer a 1 segundo (declarado en godot) cuando el timer llega a 0 attacking = false
         attacking = false
@@ -30,7 +29,7 @@ func attacking_toggle(value: bool) -> void:
     # attacking = !attacking
     attacking = value
     pass
-    
+
 
 func defend(forward: bool) -> void:
     ### tween (inbetween) es un valor que interpola entre un rango de valores
@@ -45,4 +44,38 @@ func defend(forward: bool) -> void:
 func _defend_change(value: float) -> void:
     ### value deseado es un tween
     get_node("AnimationTree").set("parameters/ShieldBlend/blend_amount", value)
+    pass
+
+
+func switch_weapon(weapon_active: bool) -> void:
+    var sword_1handed: Node3D = get_node("Rig/Skeleton3D/RightHandSlot/sword_1handed2")
+    var wand: Node3D = get_node("Rig/Skeleton3D/RightHandSlot/wand2")
+    if weapon_active:
+        sword_1handed.show()
+        wand.hide()
+    else:
+        sword_1handed.hide()
+        wand.show()
+    pass
+
+
+
+func cast_spell() -> void:
+### Spellcast_Shoot animation
+    if not attacking:
+        extra_animation.animation = "Spellcast_Shoot"
+        get_node("AnimationTree").set("parameters/ExtraOneShot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+
+
+    pass
+
+func hit() -> void:
+### Hit_B animation cuando recibe dano
+    extra_animation.animation = "Hit_B"
+    get_node("AnimationTree").set("parameters/ExtraOneShot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+    get_node("AnimationTree").set("parameters/AttackOneShot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_ABORT)
+    attacking = false
+
+
+
     pass

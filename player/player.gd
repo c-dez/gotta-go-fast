@@ -5,6 +5,7 @@ extends CharacterBody3D
 const SPEED := 8.0
 const JUMP_VELOCITY := 8
 var defend_speed: float = 5.0
+var speed_modifier: float = 1.0
 
 @onready var camera_control_node: Node3D = get_node("CameraControl")
 
@@ -22,14 +23,19 @@ var defend: bool = false:
 			skin.defend(false)
 		defend = value
 
+var weapon_active: bool = true
+
 
 func _physics_process(_delta: float) -> void:
-	action1()
+	ability_logic()
 	action2()
 	move_logic(_delta)
 	gravity(_delta)
 	jump_logic()
-	# skin.attack()
+
+	if Input.is_action_just_pressed('ui_accept'):
+		skin.hit()
+		pass
 	pass
 
 
@@ -47,6 +53,7 @@ func move_logic(_delta) -> void:
 	var move_direction: Vector3 = forward * raw_input.y + right * raw_input.x
 	move_direction = move_direction.normalized()
 	var _speed: float = defend_speed if defend else SPEED
+	_speed *= speed_modifier
 
 	if move_direction:
 		### movimiento con "peso"
@@ -70,10 +77,30 @@ func move_logic(_delta) -> void:
 	skin.global_rotation.y = lerp_angle(skin.global_rotation.y, target_angle, rotation_speed * _delta)
 
 
-func action1() -> void:
-	# if player_inputs.mb1():
+func ability_logic() -> void:
 	if Input.is_action_just_pressed("mb1"):
-		skin.attack()
+		if weapon_active:
+		### Atacar con cuerpo a cuerpo
+			skin.attack()
+			stop_movement(0.3, 0.8)
+
+		else:
+		### atacar magia
+			skin.cast_spell()
+			stop_movement(0.3, 0.8)
+
+
+	### Atacar con magia
+	if Input.is_action_just_pressed("switch_weapon") and not skin.attacking:
+		weapon_active = not weapon_active
+		skin.switch_weapon(weapon_active)
+		pass
+
+func stop_movement(start_duration:float, end_duration:float)->void:
+	var tween = create_tween()
+	tween.tween_property(self, "speed_modifier", 0.0, start_duration)
+	tween.tween_property(self, "speed_modifier", 1.0, end_duration)
+	pass
 
 
 func action2() -> void:
