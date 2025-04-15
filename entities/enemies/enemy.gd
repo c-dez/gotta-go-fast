@@ -10,9 +10,13 @@ extends CharacterBody3D
 @export var walk_speed: float = 2.0
 @export var notice_radius: float = 30.0
 @export var attack_radius: float = 3.0
+var speed_modifier: float = 1.0
 
 ## Animaciones
 @onready var move_state_machine: AnimationNodeStateMachinePlayback = get_node("AnimationTree").get("parameters/MoveStateMachine/playback")
+@onready var attack_animation: AnimationNodeAnimation = get_node("AnimationTree").get_tree_root().get_node("AttackAnimation")
+###rng
+var rng := RandomNumberGenerator.new()
 
 
 func move_to_player(_delta: float) -> void:
@@ -25,7 +29,7 @@ func move_to_player(_delta: float) -> void:
 		if position.distance_to(player.position) > attack_radius:
 		### si self esta a mas de attack_radius-> se mueve hacia player
 			### Lo paso a velocity e invoco move_and_slide() para mover se hacia esa direccion y multiplico por speed
-			velocity = Vector3(target_vec2.x, 0, target_vec2.y) * walk_speed
+			velocity = Vector3(target_vec2.x, 0, target_vec2.y) * walk_speed *speed_modifier
 			### animacion
 			move_state_machine.travel("walk")
 		else:
@@ -37,12 +41,16 @@ func move_to_player(_delta: float) -> void:
 		var target_angle: float = - target_vec2.angle() + PI / 2
 		### rotate_toward(from, to, speed)
 		rotation.y = rotate_toward(rotation.y, target_angle, _delta * 6.0)
-	# elif position.distance_to(player.position)> notice_radius:
-	# 	move_state_machine.travel("idle")
-	# 	velocity = Vector3.ZERO
 	else:
 		move_state_machine.travel("idle")
 		velocity = Vector3.ZERO
 
 	move_and_slide()
+	pass
+
+func stop_movement(start_duration: float, end_duration: float) -> void:
+	### su intencion es modificar la velocidad de movimiento para acciones como atacar
+	var tween = create_tween()
+	tween.tween_property(self, "speed_modifier", 0.0, start_duration)
+	tween.tween_property(self, "speed_modifier", 1.0, end_duration)
 	pass
