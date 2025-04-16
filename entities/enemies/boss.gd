@@ -19,19 +19,22 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_attack_timer_timeout() -> void:
-	if position.distance_to(player.position) < 5.0:
-		melee_attack_animation()
-	else:
-		range_attack_animation()
+	### cuando AttackTimer node llega a cero, se checa si jugador esta dentro de notice_radius
+		### si lo esta y  es a menos de 5.0 melee_attack_animation()
+	if is_player_in_notice_radius():
+		if position.distance_to(player.position) < 5.0:
+			melee_attack_animation()
+		### si no esta , range_attack_animation()
+		else:
+			range_attack_animation()
 
 	# 4 animaciones que controlar
 	# 2 melee attacks
 	# 2 range attacks
 
 
-
 func range_attack_animation() -> void:
-	stop_movement(1.5,1.5)
+	stop_movement(1.5, 1.5)
 
 	attack_animation.animation = simple_attacks["range"]
 	get_node("AnimationTree").set("parameters/AttackOneShot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)

@@ -21,7 +21,7 @@ var rng := RandomNumberGenerator.new()
 
 func move_to_player(_delta: float) -> void:
 	### position.distance_to() si la distancia es menor a notice_radius, entonces mueve hacia jugador
-	if position.distance_to(player.position) < notice_radius:
+	if is_player_in_notice_radius():
 		### Toma ala direccion de jugador(target) y moverse hacia el
 		var target_direction: Vector3 = (player.position - position).normalized()
 		### Lo convierto a Vector2
@@ -29,7 +29,7 @@ func move_to_player(_delta: float) -> void:
 		if position.distance_to(player.position) > attack_radius:
 		### si self esta a mas de attack_radius-> se mueve hacia player
 			### Lo paso a velocity e invoco move_and_slide() para mover se hacia esa direccion y multiplico por speed
-			velocity = Vector3(target_vec2.x, 0, target_vec2.y) * walk_speed *speed_modifier
+			velocity = Vector3(target_vec2.x, 0, target_vec2.y) * walk_speed * speed_modifier
 			### animacion
 			move_state_machine.travel("walk")
 		else:
@@ -37,9 +37,8 @@ func move_to_player(_delta: float) -> void:
 			velocity = Vector3.ZERO
 			move_state_machine.travel("idle")
 		### Rotar a direccion de Player
-		### con este codigo consigo que el angulosea correcto
+		### con este codigo consigo que el angulo sea correcto
 		var target_angle: float = - target_vec2.angle() + PI / 2
-		### rotate_toward(from, to, speed)
 		rotation.y = rotate_toward(rotation.y, target_angle, _delta * 6.0)
 	else:
 		move_state_machine.travel("idle")
@@ -47,6 +46,11 @@ func move_to_player(_delta: float) -> void:
 
 	move_and_slide()
 	pass
+
+func is_player_in_notice_radius() -> bool:
+### funcion hecha por mi
+	return true if position.distance_to(player.position) < notice_radius else false
+	
 
 func stop_movement(start_duration: float, end_duration: float) -> void:
 	### su intencion es modificar la velocidad de movimiento para acciones como atacar
