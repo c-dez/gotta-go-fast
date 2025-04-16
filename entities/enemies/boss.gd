@@ -20,6 +20,7 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_attack_timer_timeout() -> void:
+	timers.get_node("AttackTimer").wait_time = rng.randf_range(4.0, 5.5)
 	# cuando AttackTimer node llega a cero, se checa si jugador esta dentro de notice_radius
 		# si lo esta y  es a menos de 5.0 melee_attack_animation()
 	if is_player_in_notice_radius():
