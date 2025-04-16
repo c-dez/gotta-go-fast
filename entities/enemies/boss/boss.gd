@@ -15,6 +15,7 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_attack_timer_timeout() -> void:
+	# controla cuando y que ataque se hace
 	timers.get_node("AttackTimer").wait_time = rng.randf_range(4.0, 5.5)
 	# cuando AttackTimer node llega a cero, se checa si jugador esta dentro de notice_radius
 		# si lo esta y  es a menos de 5.0 melee_attack_animation()
@@ -23,10 +24,7 @@ func _on_attack_timer_timeout() -> void:
 			melee_attack_animation()
 		# si no esta , range_attack_animation()
 		if position.distance_to(player.position) > 15.0:
-			var num = rng.randi_range(0, 10)
-			print(num)
-			# if rng.randi_range(0,10) > 3:
-			if num > 3:
+			if rng.randi_range(1,10) > 3:
 				range_attack_animation()
 			else:
 				spin_attack_animation()
@@ -64,7 +62,7 @@ func melee_attack_animation() -> void:
 
 func _on_area_3d_body_entered(_body: Node3D) -> void:
 	if is_spinning:
-		await get_tree().create_timer(rng.randf_range(1.0, 2.0)).timeout
+		await get_tree().create_timer(rng.randf_range(0.5, 1.5)).timeout
 		var tween := create_tween()
 		## El mismo valor que default Enemy.speed_modifier
 		const speed_modifier_default := 1.0

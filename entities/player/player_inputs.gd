@@ -3,6 +3,7 @@ extends Node
 
 var raw_input := Vector2.ZERO
 
+@onready var skin = get_node("../GodetteSkin")
 
 func _physics_process(_delta: float) -> void:
     get_raw_input()
@@ -10,8 +11,11 @@ func _physics_process(_delta: float) -> void:
     pass
 
 func get_raw_input() -> void:
-    var vector := Input.get_vector("left", "rigth", "forward", "backwards")
-    raw_input = vector
+    if skin.attacking == false:
+        var vector := Input.get_vector("left", "rigth", "forward", "backwards")
+        raw_input = vector
+    else:
+        raw_input = Vector2.ZERO
 
 
 func space_bar() -> bool:

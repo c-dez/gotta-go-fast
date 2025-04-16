@@ -68,10 +68,11 @@ func move_logic(_delta) -> void:
 		skin.set_move_state("Idle")
 
 	move_and_slide()
-
 	### mesh mira hacia last_movement_direction
 	if move_direction.length() > 0.2:
 		last_movement_direction = move_direction
+	
+
 	var target_angle := Vector3.BACK.signed_angle_to(last_movement_direction, Vector3.UP)
 	skin.global_rotation.y = lerp_angle(skin.global_rotation.y, target_angle, rotation_speed * _delta)
 

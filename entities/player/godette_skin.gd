@@ -8,6 +8,7 @@ extends Node3D
 @onready var face_material: StandardMaterial3D = get_node("Rig/Skeleton3D/Godette_Head").get_surface_override_material(0)
 var rng := RandomNumberGenerator.new()
 
+
 var attacking: bool = false
 var squash_and_stretch: float = 1.0:
     set(value):
@@ -39,8 +40,11 @@ func attack() -> void:
         
 
 func attacking_toggle(value: bool) -> void:
-    # attacking = !attacking
     attacking = value
+
+   
+        
+    
     pass
 
 
@@ -72,6 +76,10 @@ func switch_weapon(weapon_active: bool) -> void:
         wand.show()
         do_squash_and_stretch(1.2, 0.15)
 
+    pass
+
+func attacking_lock_rotation() -> void:
+    # cuando attacking == true -> lock skin rotation to last rotation
     pass
 
 
