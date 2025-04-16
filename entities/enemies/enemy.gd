@@ -3,6 +3,14 @@ class_name Enemy
 
 extends CharacterBody3D
 
+const simple_attacks: Dictionary = {
+	"slice": "2H_Melee_Attack_Slice",
+	"spin": "2H_Melee_Attack_Spin",
+	"range": "1H_Melee_Attack_Stab",
+	"spining": "2H_Melee_Attack_Spinning",
+	"spellcast_shoot": "Spellcast_Shoot",
+}
+
 ## Referencia a el primer nodo en grupo "Player"
 @onready var player: CharacterBody3D = get_tree().get_first_node_in_group("Player")
 ## referencia a el nodo skin que contiene Mesh3d
@@ -23,15 +31,17 @@ var speed_modifier: float = 1.0
 ## Objeto para distintos RNG
 var rng := RandomNumberGenerator.new()
 
-## Decide en base a la distancia de self con target(player) si moverse hacia el o no/ controla la velocidad de movimiento
+## Camina hacia player cuando distancia es  mayor attack_radius y menor a notice_radius
 func move_to_player(_delta: float) -> void:
 	# position.distance_to() si la distancia es menor a notice_radius, entonces mueve hacia jugador
 	if is_player_in_notice_radius():
-		## Toma ala direccion de jugador(target) y moverse hacia el
+		# rota hacia player #######################
 		var target_direction: Vector3 = (player.position - position).normalized()
-		# Lo convierto a Vector2
-		## target_vec2 = Vector2(target_direction.x, target_direction.z)
 		var target_vec2 := Vector2(target_direction.x, target_direction.z)
+		var target_angle: float = - target_vec2.angle() + PI / 2
+		rotation.y = rotate_toward(rotation.y, target_angle, _delta * 6.0)
+		##########################################
+
 		if position.distance_to(player.position) > attack_radius:
 		# si self esta a mas de attack_radius-> se mueve hacia player
 			# Lo paso a velocity e invoco move_and_slide() para mover se hacia esa direccion y multiplico por speed
@@ -42,19 +52,30 @@ func move_to_player(_delta: float) -> void:
 		# si no -> no se mueve
 			velocity = Vector3.ZERO
 			move_state_machine.travel("idle")
-		## Angulo hacia que target(player) esta
-		var target_angle: float = - target_vec2.angle() + PI / 2
-		rotation.y = rotate_toward(rotation.y, target_angle, _delta * 6.0)
 	else:
 		move_state_machine.travel("idle")
 		velocity = Vector3.ZERO
 
 	move_and_slide()
 	pass
+
+
+func look_at_player(_delta) -> void:
+	# sin usar
+	var target_direction := Vector3(player.position - position).normalized()
+	var target_vec2 := Vector2(target_direction.x, target_direction.z)
+	var target_angle: float = - target_vec2.angle() + PI / 2
+	rotation.y = rotate_toward(rotation.y, target_angle, _delta * 0.90)
+
+
+	pass
+
+
 ## Funcion para detectar si Player esta dentro de notice_radius
 func is_player_in_notice_radius() -> bool:
 # funcion hecha por mi
 	return true if position.distance_to(player.position) < notice_radius else false
+
 	
 ## Detener el movimiento
 func stop_movement(start_duration: float, end_duration: float) -> void:
@@ -63,4 +84,12 @@ func stop_movement(start_duration: float, end_duration: float) -> void:
 	
 	tween.tween_property(self, "speed_modifier", 0.0, start_duration)
 	tween.tween_property(self, "speed_modifier", speed_modifier_default, end_duration)
+	pass
+
+func spellcast_shoot_animation() -> void:
+	stop_movement(1.5, 1.5)
+	attack_animation.animation = simple_attacks["spellcast_shoot"]
+	get_node("AnimationTree").set("parameters/AttackOneShot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+
+
 	pass

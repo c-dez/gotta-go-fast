@@ -7,12 +7,7 @@ extends Enemy
 var is_spinning: bool = false
 
 ### Diccionario conteniendo referencias a animaciones
-const simple_attacks: Dictionary = {
-	"slice": "2H_Melee_Attack_Slice",
-	"spin": "2H_Melee_Attack_Spin",
-	"range": "1H_Melee_Attack_Stab",
-	"spining": "2H_Melee_Attack_Spinning",
-}
+
 
 func _physics_process(delta: float) -> void:
 	move_to_player(delta)
@@ -28,7 +23,10 @@ func _on_attack_timer_timeout() -> void:
 			melee_attack_animation()
 		# si no esta , range_attack_animation()
 		if position.distance_to(player.position) > 15.0:
-			if rng.randi() % 2:
+			var num = rng.randi_range(0, 10)
+			print(num)
+			# if rng.randi_range(0,10) > 3:
+			if num > 3:
 				range_attack_animation()
 			else:
 				spin_attack_animation()
@@ -52,7 +50,7 @@ func _spin_transition(value: float) -> void:
 	pass
 	
 func range_attack_animation() -> void:
-	stop_movement(1.5, 1.5)
+	stop_movement(2.5, 2.5)
 
 	attack_animation.animation = simple_attacks["range"]
 	get_node("AnimationTree").set("parameters/AttackOneShot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
