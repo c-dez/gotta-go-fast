@@ -24,10 +24,10 @@ func _on_attack_timer_timeout() -> void:
 	# cuando AttackTimer node llega a cero, se checa si jugador esta dentro de notice_radius
 		# si lo esta y  es a menos de 5.0 melee_attack_animation()
 	if is_player_in_notice_radius():
-		if position.distance_to(player.position) < 5.0:
+		if position.distance_to(player.position) < 7.0:
 			melee_attack_animation()
 		# si no esta , range_attack_animation()
-		else:
+		if position.distance_to(player.position) > 15.0:
 			if rng.randi() % 2:
 				range_attack_animation()
 			else:
