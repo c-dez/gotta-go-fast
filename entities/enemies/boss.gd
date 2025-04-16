@@ -28,8 +28,10 @@ func _on_attack_timer_timeout() -> void:
 			melee_attack_animation()
 		# si no esta , range_attack_animation()
 		else:
-			# range_attack_animation()
-			spin_attack_animation()
+			if rng.randi() % 2:
+				range_attack_animation()
+			else:
+				spin_attack_animation()
 
 	
 func spin_attack_animation() -> void:
