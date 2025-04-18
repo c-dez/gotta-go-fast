@@ -5,6 +5,7 @@ extends CharacterBody3D
 
 const simple_attacks: Dictionary = {
 	"slice": "2H_Melee_Attack_Slice",
+	"horizontal": "1H_Melee_Attack_Slice_Horizontal",
 	"spin": "2H_Melee_Attack_Spin",
 	"range": "1H_Melee_Attack_Stab",
 	"spining": "2H_Melee_Attack_Spinning",
@@ -71,7 +72,7 @@ func look_at_player(_delta) -> void:
 	pass
 
 
-## Funcion para detectar si Player esta dentro de notice_radius
+## Funcion para detectar si Player esta dentro de var  notice_radius
 func is_player_in_notice_radius() -> bool:
 # funcion hecha por mi
 	return true if position.distance_to(player.position) < notice_radius else false
@@ -90,6 +91,11 @@ func spellcast_shoot_animation() -> void:
 	stop_movement(1.5, 1.5)
 	attack_animation.animation = simple_attacks["spellcast_shoot"]
 	get_node("AnimationTree").set("parameters/AttackOneShot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+	pass
 
 
+func melee_attack_animation() -> void:
+	stop_movement(1.5, 1.5)
+	attack_animation.animation = simple_attacks["horizontal"]
+	get_node("AnimationTree").set("parameters/AttackOneShot/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
 	pass

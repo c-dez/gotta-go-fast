@@ -3,7 +3,7 @@ extends Node
 
 var raw_input := Vector2.ZERO
 
-@onready var skin = get_node("../GodetteSkin")
+@onready var skin:Node3D = get_node("../GodetteSkin")
 
 func _physics_process(_delta: float) -> void:
     get_raw_input()
