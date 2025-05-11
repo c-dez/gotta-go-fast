@@ -40,6 +40,7 @@ func attack() -> void:
         
 
 func attacking_toggle(value: bool) -> void:
+    
     attacking = value
 
    

@@ -24,7 +24,7 @@ func _on_attack_timer_timeout() -> void:
 			melee_attack_animation()
 		# si no esta , range_attack_animation()
 		if position.distance_to(player.position) > 15.0:
-			if rng.randi_range(1,10) > 3:
+			if rng.randi_range(1,10) > 4:
 				range_attack_animation()
 			else:
 				spin_attack_animation()

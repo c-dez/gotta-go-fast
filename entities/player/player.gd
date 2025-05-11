@@ -25,19 +25,46 @@ var defend: bool = false:
 
 var weapon_active: bool = true
 
+# BETTER JUMP
+@export var jump_height: float = 1
+@export var jump_time_to_peak: float = 0.4
+@export var jump_time_to_decend: float = 0.5
+
+var jump_velocity
+var jump_gravity
+var jump_fall_gravity
+
+
+func _ready() -> void:
+	jump_velocity = 2.0 * jump_height / jump_time_to_peak
+	jump_gravity = 2.0 * jump_height / (jump_time_to_peak * jump_time_to_peak)
+	jump_fall_gravity = 2.0 * jump_height / (jump_time_to_decend * jump_time_to_decend)
+
 
 func _physics_process(_delta: float) -> void:
 	ability_logic()
 	action2()
 	move_logic(_delta)
-	gravity(_delta)
-	jump_logic()
+	# gravity(_delta)
+	# jump_logic()
+	jump(_delta)
 
 	if Input.is_action_just_pressed('ui_accept'):
 		# skin.hit()
 		pass
 	pass
 
+func jump(_delta: float) -> void:
+	if Input.is_action_just_pressed("space") and is_on_floor():
+		skin.do_squash_and_stretch(1.2, 0.15)
+		velocity.y = jump_velocity
+	if not is_on_floor():
+		if velocity.y < 0.0:
+			velocity.y -= jump_fall_gravity * _delta
+		else:
+			velocity.y -= jump_gravity * _delta
+	move_and_slide()
+	
 
 func move_logic(_delta) -> void:
 	### esta version implementa parte de codigo de gdquest para mover en tercera persona entre el input de el player y la pocicion de la camara
@@ -68,7 +95,7 @@ func move_logic(_delta) -> void:
 		skin.set_move_state("Idle")
 
 	move_and_slide()
-	### mesh mira hacia last_movement_direction
+	# mesh mira hacia last_movement_direction
 	if move_direction.length() > 0.2:
 		last_movement_direction = move_direction
 	
@@ -80,24 +107,24 @@ func move_logic(_delta) -> void:
 func ability_logic() -> void:
 	if Input.is_action_just_pressed("mb1"):
 		if weapon_active:
-		### Atacar con cuerpo a cuerpo
+		# Atacar con cuerpo a cuerpo
 			skin.attack()
 			stop_movement(0.3, 0.5)
 
 		else:
-		### atacar magia
+		# atacar magia
 			skin.cast_spell()
 			stop_movement(0.3, 0.8)
 
 
-	### Atacar con magia
+	# Atacar con magia
 	if Input.is_action_just_pressed("switch_weapon") and not skin.attacking:
 		weapon_active = not weapon_active
 		skin.switch_weapon(weapon_active)
 		pass
 
 
-func stop_movement(start_duration:float, end_duration:float)->void:
+func stop_movement(start_duration: float, end_duration: float) -> void:
 	### su intencion es modificar la velocidad de movimiento para acciones como atacar
 	var tween = create_tween()
 	tween.tween_property(self, "speed_modifier", 0.0, start_duration)
@@ -110,18 +137,17 @@ func action2() -> void:
 
 
 func jump_logic() -> void:
+	# old
 	if player_inputs.space_bar() and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 		skin.do_squash_and_stretch(1.2, 0.15)
 
 
 func gravity(_delta) -> void:
+	# old
 	if not is_on_floor():
 		velocity += get_gravity() * 1.2 * _delta
 		skin.set_move_state("Jump")
 
 	if velocity.y < 0:
 		velocity += get_gravity() * 2 * _delta
-
-
-

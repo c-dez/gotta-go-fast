@@ -72,13 +72,11 @@ func look_at_player(_delta) -> void:
 	pass
 
 
-## Funcion para detectar si Player esta dentro de var  notice_radius
 func is_player_in_notice_radius() -> bool:
 # funcion hecha por mi
 	return true if position.distance_to(player.position) < notice_radius else false
 
 	
-## Detener el movimiento
 func stop_movement(start_duration: float, end_duration: float) -> void:
 	const speed_modifier_default := 1.0
 	var tween := create_tween()
